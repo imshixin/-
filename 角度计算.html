@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="./tools.js"></script>
+  <script src="./interpreter.js"></script>
+  <style>
+    #panel {
+      height: 150px;
+      margin-top: 10px;
+      background-color: #aea;
+      border: 1px dotted #eae;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 1.5em;
+      ;
+    }
+
+    button {
+      display: block;
+      height: 40px;
+      width: 80%;
+      font-size: large;
+      border-radius: 10px;
+      border: 2px solid #aea;
+      margin: 3px 10px;
+      transition: background-color .5s linear 0;
+    }
+    #btn1{
+      display: block;
+      margin: 3px auto;
+    }
+
+    button:active {
+      background-color: rgb(109, 109, 109);
+    }
+
+    .tools {
+      background-color: rgba(52, 47, 116, 0.274);
+      border-radius: 10px;
+      padding: 3px;
+      margin: 8px 3px;
+    }
+
+    .tools button {
+      float: left;
+      width: auto;
+      min-width: 100px;
+      padding: 2px 10px;
+    }
+
+    .tools:after {
+      content: '';
+      clear: both;
+      display: block;
+    }
+
+    #form1 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 10px;
+    }
+
+    #form1 input {
+      font-size: 25px;
+      text-align: center;
+      margin: 3px;
+      width: 80%;
+      height: 30px;
+      border: 2px solid #eae;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    #form1 input:focus-visible {
+      border: 2px solid rgb(248, 3, 56);
+    }
+
+  </style>
+</head>
+
+<body>
+  <form id='form1' action="">
+
+    角度1<input type="number" name="ang1" id="ang1" autocomplete="off" autofocus onfocus="this.select()">
+    角度2<input type="number" name="ang1" id="ang2" autocomplete="off" onfocus="this.select()"><br>
+    直接计算<input type="text" id='int3' autocomplete="off">
+    <button type="reset">清空</button>
+  </form>
+  <button id="btn1" onclick="onInterpret()">直接计算(q)</button>
+  <div class="tools">
+    <button onclick="onAdd()">加(a)</button>
+    <button onclick="onMinus()">减(s)</button>
+    <button onclick="toAng1()">结果到角1(d)</button>
+    <button onclick="toAng2()">结果到角2(f)</button>
+    <button onclick="switchAng()">角度交换(g)</button>
+  </div>
+  <div id='panel'>结果：
+    <p class="result" id='result1'></p>
+    <p class="result" id='result2'></p>
+  </div>
+</body>
+<script>
+
+  window.currAng = {};
+  function onInterpret() {
+    var statement = int3.value
+    var ret=interpret(statement)
+    currAng=getAngel(ret)
+    result1.innerHTML = printAngel(currAng)
+    result2.innerHTML = ret
+
+  }
+  function onAdd() {
+    let ang1 = form1[0].value ? form1[0].value : 0
+    let ang2 = form1[1].value ? form1[1].value : 0
+    currAng = getAngel(add(Number(ang1), Number(ang2)))
+    result1.innerHTML = printAngel(currAng)
+    result2.innerHTML = toAngel(currAng)
+  }
+  function onMinus() {
+    let ang1 = form1[0].value ? form1[0].value : 0
+    let ang2 = form1[1].value ? form1[1].value : 0
+    currAng = getAngel(minus(Number(ang1), Number(ang2)))
+    result1.innerHTML = printAngel(currAng)
+    result2.innerHTML = toAngel(currAng)
+  }
+  function toAng1() {
+    form1[0].value = toAngel(currAng)
+  }
+  function toAng2() {
+    form1[1].value = toAngel(currAng)
+  }
+  function switchAng() {
+    let tmp = form1[0].value
+    form1[0].value = form1[1].value
+    form1[1].value = tmp
+  }
+
+  document.onkeydown = function (e) {
+    var keyCode = e.keyCode || e.which || e.charCode;
+    var ctrlKey = e.ctrlKey || e.metaKey;
+    var shiftKey = e.shiftKey;
+    if (shiftKey) {
+      switch (keyCode) {
+        case 65:
+          onAdd();
+          break;
+        case 83:
+          onMinus();
+          break;
+        case 68:
+          toAng1();
+          break;
+        case 70:
+          toAng2();
+          break;
+        case 71:
+          switchAng();
+          break;
+        case 81:
+          onInterpret();
+          break;
+      }
+      e.preventDefault();
+      return false;
+    }
+    return true;
+  }
+</script>
+
+</html>
